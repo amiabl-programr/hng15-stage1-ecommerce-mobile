@@ -12,6 +12,21 @@ export interface ProductCardProps {
   product: Product;
 }
 
+const PROFILE_FALLBACK_IMAGES: Record<string, string> = {
+  longspan: 'https://images.unsplash.com/photo-1602193289141-9605ad75d0a5?auto=format&fit=crop&w=800&q=80',
+  metcoppo: 'https://images.unsplash.com/photo-1610056868457-e61d6f9eeb86?auto=format&fit=crop&w=800&q=80',
+  'step-tile': 'https://images.unsplash.com/photo-1610056868457-e61d6f9eeb86?auto=format&fit=crop&w=800&q=80',
+  shingle: 'https://images.unsplash.com/photo-1647546656105-c6a9cfa6f0fd?auto=format&fit=crop&w=800&q=80',
+  corrugated: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
+  ridge: 'https://images.unsplash.com/photo-1617459973560-33aea09d1c22?auto=format&fit=crop&w=800&q=80',
+  trimmer: 'https://images.unsplash.com/photo-1617459973560-33aea09d1c22?auto=format&fit=crop&w=800&q=80',
+  gutter: 'https://images.unsplash.com/photo-1617459973560-33aea09d1c22?auto=format&fit=crop&w=800&q=80',
+  flashing: 'https://images.unsplash.com/photo-1617459973560-33aea09d1c22?auto=format&fit=crop&w=800&q=80',
+  fastener: 'https://images.unsplash.com/photo-1647427060142-c18ea9536019?auto=format&fit=crop&w=800&q=80',
+  'roll-forming': 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80',
+  bending: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+};
+
 export function ProductCard({ product }: ProductCardProps) {
   const router = useRouter();
   const theme = useTheme();
@@ -19,6 +34,10 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const primaryMedia = product.media.find((m) => m.isPrimary) || product.media[0];
   const imageUrl = primaryMedia?.url;
+  const effectiveImageUrl =
+    imageUrl ||
+    PROFILE_FALLBACK_IMAGES[product.profileKind] ||
+    'https://images.unsplash.com/photo-1602193289141-9605ad75d0a5?auto=format&fit=crop&w=800&q=80';
 
   const handlePress = () => {
     router.push({
@@ -48,19 +67,13 @@ export function ProductCard({ product }: ProductCardProps) {
       onPress={handlePress}
     >
       <View style={[styles.imageContainer, { backgroundColor: theme.backgroundElement }]}>
-        {imageUrl ? (
-          <Image
-            source={{ uri: imageUrl }}
-            placeholder={primaryMedia?.blurhash}
-            style={styles.image}
-            contentFit="cover"
-            transition={200}
-          />
-        ) : (
-          <View style={styles.imagePlaceholder}>
-            <Ionicons name="cube-outline" size={40} color={theme.textMuted} />
-          </View>
-        )}
+        <Image
+          source={{ uri: effectiveImageUrl }}
+          placeholder={primaryMedia?.blurhash}
+          style={styles.image}
+          contentFit="cover"
+          transition={200}
+        />
         {product.category && (
           <View style={[styles.categoryBadge, { backgroundColor: 'rgba(15, 23, 42, 0.75)' }]}>
             <Text style={styles.categoryText}>{product.category.name}</Text>

@@ -16,14 +16,14 @@ export interface CartItemRowProps {
 export function CartItemRow({ item, onUpdateQuantity, onRemove }: CartItemRowProps) {
   const theme = useTheme();
 
+  const effectiveImage =
+    item.imageUrl ||
+    'https://images.unsplash.com/photo-1602193289141-9605ad75d0a5?auto=format&fit=crop&w=800&q=80';
+
   return (
     <View style={[styles.container, { backgroundColor: theme.card, borderColor: theme.border }]}>
       <View style={[styles.imageContainer, { backgroundColor: theme.backgroundElement }]}>
-        {item.imageUrl ? (
-          <Image source={{ uri: item.imageUrl }} style={styles.image} contentFit="cover" />
-        ) : (
-          <Ionicons name="cube-outline" size={28} color={theme.textMuted} />
-        )}
+        <Image source={{ uri: effectiveImage }} style={styles.image} contentFit="cover" />
       </View>
 
       <View style={styles.details}>

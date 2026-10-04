@@ -132,6 +132,23 @@ export default function ProductDetailScreen() {
 
   const mediaList = product.media || [];
   const currentImage = mediaList[selectedImageIndex] || mediaList[0];
+  const effectiveImageUrl =
+    currentImage?.url ||
+    {
+      longspan: 'https://images.unsplash.com/photo-1602193289141-9605ad75d0a5?auto=format&fit=crop&w=800&q=80',
+      metcoppo: 'https://images.unsplash.com/photo-1610056868457-e61d6f9eeb86?auto=format&fit=crop&w=800&q=80',
+      'step-tile': 'https://images.unsplash.com/photo-1610056868457-e61d6f9eeb86?auto=format&fit=crop&w=800&q=80',
+      shingle: 'https://images.unsplash.com/photo-1647546656105-c6a9cfa6f0fd?auto=format&fit=crop&w=800&q=80',
+      corrugated: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80',
+      ridge: 'https://images.unsplash.com/photo-1617459973560-33aea09d1c22?auto=format&fit=crop&w=800&q=80',
+      trimmer: 'https://images.unsplash.com/photo-1617459973560-33aea09d1c22?auto=format&fit=crop&w=800&q=80',
+      gutter: 'https://images.unsplash.com/photo-1617459973560-33aea09d1c22?auto=format&fit=crop&w=800&q=80',
+      flashing: 'https://images.unsplash.com/photo-1617459973560-33aea09d1c22?auto=format&fit=crop&w=800&q=80',
+      fastener: 'https://images.unsplash.com/photo-1647427060142-c18ea9536019?auto=format&fit=crop&w=800&q=80',
+      'roll-forming': 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80',
+      bending: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+    }[product.profileKind] ||
+    'https://images.unsplash.com/photo-1602193289141-9605ad75d0a5?auto=format&fit=crop&w=800&q=80';
 
   return (
     <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
@@ -140,19 +157,13 @@ export default function ProductDetailScreen() {
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Main Image */}
         <View style={[styles.mainImageContainer, { backgroundColor: theme.backgroundElement }]}>
-          {currentImage?.url ? (
-            <Image
-              source={{ uri: currentImage.url }}
-              placeholder={currentImage.blurhash}
-              style={styles.mainImage}
-              contentFit="cover"
-              transition={200}
-            />
-          ) : (
-            <View style={styles.imagePlaceholder}>
-              <Ionicons name="cube-outline" size={64} color={theme.textMuted} />
-            </View>
-          )}
+          <Image
+            source={{ uri: effectiveImageUrl }}
+            placeholder={currentImage?.blurhash}
+            style={styles.mainImage}
+            contentFit="cover"
+            transition={200}
+          />
         </View>
 
         {/* Thumbnail Gallery */}
