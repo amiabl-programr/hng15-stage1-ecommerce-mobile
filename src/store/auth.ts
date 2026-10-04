@@ -15,7 +15,6 @@ interface AuthState {
   error: string | null;
 
   restoreSession: () => Promise<Profile | null>;
-  loginWithEmail: (email: string) => Promise<Profile | null>;
   loginWithGoogle: () => Promise<Profile | null>;
   logout: () => Promise<void>;
   setUser: (user: Profile | null) => void;
@@ -49,27 +48,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       await clearSessionToken();
       set({ user: null, isLoading: false, isInitialized: true });
       return null;
-    }
-  },
-
-  loginWithEmail: async (email: string) => {
-    set({ isLoading: true, error: null });
-    try {
-      const res = await api.post<{ success: true; user: Profile; sessionToken: string }>(
-        '/api/auth/login',
-        { email: email.trim() }
-      );
-
-      if (res.sessionToken) {
-        await setSessionToken(res.sessionToken);
-      }
-
-      set({ user: res.user, isLoading: false, isInitialized: true });
-      return res.user;
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Login failed';
-      set({ isLoading: false, error: message });
-      throw err;
     }
   },
 
@@ -122,7 +100,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 }));
 
 export function useAuth() {
-  const { user, isLoading, isInitialized, error, restoreSession, loginWithEmail, loginWithGoogle, logout } =
+  const { user, isLoading, isInitialized, error, restoreSession, loginWithGoogle, logout } =
     useAuthStore();
 
   return {
@@ -133,7 +111,6 @@ export function useAuth() {
     isAdmin: user?.role === 'admin',
     error,
     restoreSession,
-    loginWithEmail,
     loginWithGoogle,
     logout,
   };

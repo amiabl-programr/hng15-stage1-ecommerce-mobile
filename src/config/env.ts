@@ -9,10 +9,11 @@ const extra = Constants.expirationDate ? {} : (Constants.expoConfig?.extra ?? {}
 export const config = {
   /**
    * Base URL for the ecommerce backend API.
-   * In dev: http://<your-local-ip>:4000
-   * In prod: your deployed backend URL
    */
-  apiBaseUrl: (extra as Record<string, string>).apiBaseUrl ?? 'http://localhost:4000',
+  apiBaseUrl:
+    process.env.EXPO_PUBLIC_API_BASE_URL ||
+    (extra as Record<string, string>).apiBaseUrl ||
+    'https://hng15-stage1-ecommerce-be-2.onrender.com',
 
   /** Session cookie name — must match the backend */
   sessionCookieName: 'roofing_session',

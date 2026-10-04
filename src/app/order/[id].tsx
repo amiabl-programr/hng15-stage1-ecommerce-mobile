@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/use-theme';

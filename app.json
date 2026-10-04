@@ -44,7 +44,7 @@
     },
     "extra": {
       "router": {},
-      "apiBaseUrl": "http://10.24.185.154:4000",
+      "apiBaseUrl": "https://hng15-stage1-ecommerce-be-2.onrender.com",
       "eas": {
         "projectId": "afcadf3d-c5bf-4a8e-95a1-fc2d062b7280"
       }

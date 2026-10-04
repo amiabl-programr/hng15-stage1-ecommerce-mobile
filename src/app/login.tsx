@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
 import {
-  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  SafeAreaView,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../hooks/use-theme';
@@ -22,10 +20,9 @@ export default function LoginScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ returnTo?: string }>();
   const theme = useTheme();
-  const { loginWithEmail, loginWithGoogle, isLoading } = useAuth();
+  const { loginWithGoogle, isLoading } = useAuth();
   const { syncFromServer } = useCart();
 
-  const [email, setEmail] = useState('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -37,24 +34,6 @@ export default function LoginScreen() {
       router.replace(params.returnTo as any);
     } else {
       router.back();
-    }
-  };
-
-  const handleEmailSubmit = async () => {
-    if (!email.trim() || !email.includes('@')) {
-      setErrorMsg('Please enter a valid email address');
-      return;
-    }
-
-    setErrorMsg(null);
-    setSubmitting(true);
-    try {
-      await loginWithEmail(email.trim());
-      await handleSuccess();
-    } catch (err) {
-      setErrorMsg(err instanceof Error ? err.message : 'Login failed');
-    } finally {
-      setSubmitting(false);
     }
   };
 
@@ -94,9 +73,9 @@ export default function LoginScreen() {
             <View style={[styles.logoCircle, { backgroundColor: theme.primary }]}>
               <Ionicons name="construct" size={32} color="#ffffff" />
             </View>
-            <Text style={[styles.title, { color: theme.text }]}>Welcome Back</Text>
+            <Text style={[styles.title, { color: theme.text }]}>Welcome</Text>
             <Text style={[styles.subtitle, { color: theme.textSecondary }]}>
-              Sign in to sync your cart with the web store and track your orders.
+              Sign in with your Google account to sync your cart with the web store and track your orders.
             </Text>
           </View>
 
@@ -107,51 +86,14 @@ export default function LoginScreen() {
             </View>
           )}
 
-          {/* Email Login Form */}
-          <View style={styles.form}>
-            <Text style={[styles.inputLabel, { color: theme.text }]}>Email Address</Text>
-            <View
-              style={[
-                styles.inputWrapper,
-                { backgroundColor: theme.backgroundElement, borderColor: theme.border },
-              ]}
-            >
-              <Ionicons name="mail-outline" size={20} color={theme.textMuted} />
-              <TextInput
-                style={[styles.input, { color: theme.text }]}
-                placeholder="name@example.com"
-                placeholderTextColor={theme.textMuted}
-                value={email}
-                onChangeText={setEmail}
-                autoCapitalize="none"
-                keyboardType="email-address"
-                autoCorrect={false}
-              />
-            </View>
-
-            <Button
-              title="Continue with Email"
-              size="lg"
-              loading={submitting}
-              onPress={handleEmailSubmit}
-              style={{ marginTop: 16 }}
-            />
-          </View>
-
-          <View style={styles.dividerRow}>
-            <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
-            <Text style={[styles.dividerText, { color: theme.textMuted }]}>OR</Text>
-            <View style={[styles.dividerLine, { backgroundColor: theme.border }]} />
-          </View>
-
           {/* Google OAuth Button */}
           <Button
             title="Continue with Google"
-            variant="secondary"
+            variant="primary"
             size="lg"
-            loading={submitting}
+            loading={submitting || isLoading}
             onPress={handleGoogleSubmit}
-            icon={<Ionicons name="logo-google" size={20} color={theme.primary} />}
+            icon={<Ionicons name="logo-google" size={22} color="#ffffff" />}
           />
 
           <View style={styles.footerNote}>
@@ -184,29 +126,30 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     padding: 24,
-    paddingTop: 8,
+    paddingTop: 16,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 24,
+    marginBottom: 32,
+    marginTop: 16,
   },
   logoCircle: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 72,
+    height: 72,
+    borderRadius: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: '800',
-    marginBottom: 8,
+    marginBottom: 10,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 15,
     textAlign: 'center',
-    lineHeight: 20,
+    lineHeight: 22,
     paddingHorizontal: 16,
   },
   errorBanner: {
@@ -217,7 +160,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 12,
     borderRadius: 12,
-    marginBottom: 16,
+    marginBottom: 20,
     gap: 8,
   },
   errorText: {
@@ -225,50 +168,14 @@ const styles = StyleSheet.create({
     fontSize: 13,
     flex: 1,
   },
-  form: {
-    marginBottom: 16,
-  },
-  inputLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    marginBottom: 6,
-  },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    height: 48,
-    gap: 10,
-  },
-  input: {
-    flex: 1,
-    fontSize: 15,
-    height: '100%',
-  },
-  dividerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginVertical: 18,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-  },
-  dividerText: {
-    fontSize: 12,
-    fontWeight: '700',
-  },
   footerNote: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 32,
+    marginTop: 36,
     gap: 6,
   },
   footerText: {
-    fontSize: 12,
+    fontSize: 13,
   },
 });
