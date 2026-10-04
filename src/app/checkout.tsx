@@ -44,6 +44,15 @@ export default function CheckoutScreen() {
   const deliveryFee = 0; // Standard free delivery promotional period
   const total = subtotal + deliveryFee;
 
+  React.useEffect(() => {
+    if (!user) {
+      router.replace({
+        pathname: '/login',
+        params: { returnTo: '/checkout' },
+      });
+    }
+  }, [user, router]);
+
   const handlePlaceOrder = async () => {
     if (!fullName.trim()) {
       setErrorMsg('Please enter your full name');
