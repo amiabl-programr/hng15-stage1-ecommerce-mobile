@@ -1,5 +1,11 @@
 import { config } from '../../config/env';
 import { api } from './client';
+import {
+  getSeedCategoriesResponse,
+  getSeedFeaturedResponse,
+  getSeedProductBySlug,
+  getSeedProductsResponse,
+} from './seedData';
 import type {
   AccountOverviewResponse,
   AddToCartRequest,
@@ -22,29 +28,61 @@ import type {
 // ── Catalog ───────────────────────────────────────────────────────────────────
 
 export async function getCategories(): Promise<CategoryListResponse> {
-  return api.get<CategoryListResponse>('/api/categories');
+  try {
+    const res = await api.get<CategoryListResponse>('/api/categories');
+    if (res && Array.isArray(res.items) && res.items.length > 0) {
+      return res;
+    }
+    return getSeedCategoriesResponse();
+  } catch {
+    return getSeedCategoriesResponse();
+  }
 }
 
 export async function getProducts(
   query: ProductListQuery = {},
 ): Promise<ProductListResponse> {
-  const params = new URLSearchParams();
-  if (query.category) params.set('category', query.category);
-  if (query.cursor) params.set('cursor', query.cursor);
-  if (query.limit) params.set('limit', String(query.limit));
+  try {
+    const params = new URLSearchParams();
+    if (query.category) params.set('category', query.category);
+    if (query.cursor) params.set('cursor', query.cursor);
+    if (query.limit) params.set('limit', String(query.limit));
 
-  const qs = params.toString();
-  return api.get<ProductListResponse>(`/api/products${qs ? `?${qs}` : ''}`);
+    const qs = params.toString();
+    const res = await api.get<ProductListResponse>(`/api/products${qs ? `?${qs}` : ''}`);
+    if (res && Array.isArray(res.items) && res.items.length > 0) {
+      return res;
+    }
+    return getSeedProductsResponse(query.category);
+  } catch {
+    return getSeedProductsResponse(query.category);
+  }
 }
 
 export async function getFeaturedProducts(): Promise<FeaturedListResponse> {
-  return api.get<FeaturedListResponse>('/api/products/featured');
+  try {
+    const res = await api.get<FeaturedListResponse>('/api/products/featured');
+    if (res && Array.isArray(res.items) && res.items.length > 0) {
+      return res;
+    }
+    return getSeedFeaturedResponse();
+  } catch {
+    return getSeedFeaturedResponse();
+  }
 }
 
 export async function getProductBySlug(
   slug: string,
 ): Promise<ProductBySlugResponse> {
-  return api.get<ProductBySlugResponse>(`/api/products/${slug}`);
+  try {
+    const res = await api.get<ProductBySlugResponse>(`/api/products/${slug}`);
+    if (res && res.product) {
+      return res;
+    }
+    return getSeedProductBySlug(slug);
+  } catch {
+    return getSeedProductBySlug(slug);
+  }
 }
 
 // ── Cart ──────────────────────────────────────────────────────────────────────

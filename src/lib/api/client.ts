@@ -56,10 +56,11 @@ export async function request<T>(
 
   const headers = new Headers(options.headers || {});
 
-  // Attach session cookie from secure store
+  // Attach session cookie and Bearer authorization header from secure store
   const sessionToken = await getSessionToken();
   if (sessionToken) {
     headers.set('Cookie', `${config.sessionCookieName}=${sessionToken}`);
+    headers.set('Authorization', `Bearer ${sessionToken}`);
   }
 
   if (!(options.body instanceof FormData) && !headers.has('Content-Type')) {

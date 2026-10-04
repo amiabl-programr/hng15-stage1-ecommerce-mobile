@@ -56,7 +56,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const redirectUri = Linking.createURL('auth-callback');
       const baseUrl = config.apiBaseUrl.replace(/\/+$/, '');
-      const authUrl = `${baseUrl}/api/auth/google?next=${encodeURIComponent('/account')}`;
+      const authUrl = `${baseUrl}/api/auth/google?redirect_uri=${encodeURIComponent(redirectUri)}&next=${encodeURIComponent('/account')}`;
 
       const result = await WebBrowser.openAuthSessionAsync(authUrl, redirectUri);
 
@@ -66,6 +66,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         if (token) {
           await setSessionToken(token);
         }
+      } else if (result.type === 'cancel' || result.type === 'dismiss') {
+        set({ isLoading: false });
+        return null;
       }
 
       // Validate session with server
