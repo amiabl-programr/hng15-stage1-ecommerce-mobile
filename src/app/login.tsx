@@ -27,14 +27,13 @@ export default function LoginScreen() {
   const [submitting, setSubmitting] = useState(false);
 
   const handleSuccess = async () => {
-    // Immediately sync cart with backend for the newly signed in user
-    await syncFromServer();
-
     if (params.returnTo) {
       router.replace(params.returnTo as any);
     } else {
       router.back();
     }
+    // Sync cart with backend in background
+    syncFromServer().catch(() => {});
   };
 
   const handleGoogleSubmit = async () => {

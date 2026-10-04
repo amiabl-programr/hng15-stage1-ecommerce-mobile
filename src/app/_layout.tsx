@@ -65,6 +65,13 @@ export default function RootLayout() {
             animation: 'slide_from_bottom',
           }}
         />
+        <Stack.Screen
+          name="auth-callback"
+          options={{
+            headerShown: false,
+            animation: 'none',
+          }}
+        />
       </Stack>
     </>
   );
