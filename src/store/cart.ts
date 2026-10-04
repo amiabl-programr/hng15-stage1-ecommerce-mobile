@@ -103,9 +103,35 @@ export const useCartStore = create<CartStoreState>()(
           if (!token) return;
 
           set({ isLoading: true });
+
+          // If the local cart has items that haven't been synced to server yet,
+          // push each unsynced guest item to the server
+          const currentItems = get().items;
+          const unsyncedItems = currentItems.filter(
+            (item) => !item.serverId && !item.productId.startsWith('b0000000-0000-4000-8000')
+          );
+          for (const item of unsyncedItems) {
+            try {
+              await apiAddToCart({
+                productId: item.productId,
+                variantId: item.variantId,
+                quantity: item.quantity,
+                customSpecs: item.customSpecs,
+              });
+            } catch {
+              // Ignore failed items to avoid blocking sync
+            }
+          }
+
           const res = await apiGetCart();
           if (res && Array.isArray(res.items)) {
-            set({ items: res.items.map(mapServerItem), isLoading: false });
+            if (res.items.length > 0) {
+              set({ items: res.items.map(mapServerItem), isLoading: false });
+            } else if (unsyncedItems.length === 0) {
+              set({ items: [], isLoading: false });
+            } else {
+              set({ isLoading: false });
+            }
           } else {
             set({ isLoading: false });
           }
@@ -116,6 +142,7 @@ export const useCartStore = create<CartStoreState>()(
 
       addItem: async ({ product, variant, quantity, customSpecs }) => {
         if (quantity <= 0) return;
+        if (product.id.startsWith('b0000000-0000-4000-8000')) return;
 
         const effectivePrice = variant?.priceOverride != null ? variant.priceOverride : product.basePrice;
         const itemId = generateCartItemId(product.id, variant?.id, customSpecs);
@@ -270,6 +297,14 @@ export const useCartStore = create<CartStoreState>()(
       name: 'roofing_mobile_cart',
       storage: createJSONStorage(() => AsyncStorage),
       onRehydrateStorage: () => (state) => {
+        if (state?.items) {
+          const sanitized = state.items.filter(
+            (item) => !item.productId.startsWith('b0000000-0000-4000-8000')
+          );
+          if (sanitized.length !== state.items.length) {
+            useCartStore.setState({ items: sanitized });
+          }
+        }
         state?.setHydrated(true);
         state?.syncFromServer();
       },
