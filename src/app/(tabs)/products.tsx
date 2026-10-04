@@ -84,7 +84,7 @@ export default function ProductsScreen() {
   );
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={[styles.safeArea, { backgroundColor: theme.background }]}>
       <Header title="Catalogue" showBack={false} />
 
       {/* Search Input */}

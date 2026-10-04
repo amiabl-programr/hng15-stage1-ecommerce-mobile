@@ -20,7 +20,7 @@ import { Header } from '../../components/ui/Header';
 export default function CartScreen() {
   const router = useRouter();
   const theme = useTheme();
-  const { items, itemCount, subtotal, updateQuantity, removeItem, clearCart, syncFromServer, isLoading } =
+  const { items, itemCount, subtotal, updateQuantity, removeItem, clearCart, syncFromServer } =
     useCart();
   const { isAuthenticated } = useAuth();
 
@@ -40,7 +40,7 @@ export default function CartScreen() {
   };
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={[styles.safeArea, { backgroundColor: theme.background }]}>
       <Header
         title="Shopping Cart"
         showBack={false}

@@ -9,8 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../hooks/use-theme';
@@ -27,7 +27,7 @@ const STANDARD_COLOURS = ['Traffic Blue', 'Wine Red', 'Forest Green', 'Slate Gre
 const STANDARD_FINISHES = ['High-Gloss', 'Matte Textured', 'Stone-Coated'];
 
 export default function ProductDetailScreen() {
-  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { slug } = useLocalSearchParams<{ slug: string }>();
   const theme = useTheme();
   const { addItem } = useCart();
@@ -38,8 +38,8 @@ export default function ProductDetailScreen() {
   const [quantity, setQuantity] = useState(1);
   const [lengthMetres, setLengthMetres] = useState<string>('3');
   const [selectedColour, setSelectedColour] = useState<string>(STANDARD_COLOURS[0]);
-  const [selectedFinish, setSelectedFinish] = useState<string>(STANDARD_FINISHES[0]);
-  const [notes, setNotes] = useState('');
+  const [selectedFinish] = useState<string>(STANDARD_FINISHES[0]);
+  const [notes] = useState('');
   const [loading, setLoading] = useState(true);
   const [addedNotice, setAddedNotice] = useState(false);
 
@@ -151,10 +151,10 @@ export default function ProductDetailScreen() {
     'https://images.unsplash.com/photo-1602193289141-9605ad75d0a5?auto=format&fit=crop&w=800&q=80';
 
   return (
-    <SafeAreaView style={[styles.safeArea, { backgroundColor: theme.background }]}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={[styles.safeArea, { backgroundColor: theme.background }]}>
       <Header title={product.name} showBack={true} />
 
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView contentContainerStyle={[styles.scrollContent, { paddingBottom: 90 + insets.bottom }]}>
         {/* Main Image */}
         <View style={[styles.mainImageContainer, { backgroundColor: theme.backgroundElement }]}>
           <Image
@@ -318,6 +318,7 @@ export default function ProductDetailScreen() {
             backgroundColor: theme.card,
             borderTopColor: theme.border,
             shadowColor: '#000',
+            paddingBottom: insets.bottom > 0 ? insets.bottom + 8 : 16,
           },
         ]}
       >

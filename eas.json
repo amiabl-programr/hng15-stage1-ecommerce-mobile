@@ -9,11 +9,25 @@
     },
     "preview": {
       "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://hng15-stage1-ecommerce-be-2.onrender.com"
+      },
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "production-apk": {
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://hng15-stage1-ecommerce-be-2.onrender.com"
+      },
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://hng15-stage1-ecommerce-be-2.onrender.com"
+      },
       "android": {
         "buildType": "app-bundle"
       }
