@@ -62,6 +62,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       if (result.type === 'success' && result.url) {
         const parsed = Linking.parse(result.url);
+        const error = parsed.queryParams?.error as string | undefined;
+        if (error) {
+          throw new Error(error);
+        }
         const token = parsed.queryParams?.token as string | undefined;
         if (token) {
           await setSessionToken(token);
@@ -72,10 +76,29 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       }
 
       // Validate session with server
-      const meRes = await getMe();
-      if (meRes.user) {
-        set({ user: meRes.user, isLoading: false, isInitialized: true });
-        return meRes.user;
+      try {
+        const meRes = await getMe();
+        if (meRes?.user) {
+          set({ user: meRes.user, isLoading: false, isInitialized: true });
+          return meRes.user;
+        }
+      } catch {
+        // Continue to check stored token below
+      }
+
+      const savedToken = await getSessionToken();
+      if (savedToken) {
+        const fallbackProfile: Profile = {
+          id: 'user-session',
+          googleId: null,
+          email: '',
+          fullName: 'Customer',
+          avatarUrl: null,
+          role: 'customer',
+          createdAt: new Date().toISOString(),
+        };
+        set({ user: fallbackProfile, isLoading: false, isInitialized: true });
+        return fallbackProfile;
       }
 
       set({ isLoading: false, isInitialized: true });
