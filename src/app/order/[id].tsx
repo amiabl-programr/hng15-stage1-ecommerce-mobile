@@ -87,6 +87,22 @@ export default function OrderDetailScreen() {
           />
         </View>
 
+        {/* Confirmation Email Notice */}
+        <View style={[styles.emailNoticeCard, { backgroundColor: '#f0fdf4', borderColor: '#bbf7d0' }]}>
+          <View style={[styles.emailIconCircle, { backgroundColor: '#16a34a' }]}>
+            <Ionicons name="mail" size={16} color="#ffffff" />
+          </View>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.emailNoticeTitle, { color: '#15803d' }]}>
+              Confirmation Email Dispatched
+            </Text>
+            <Text style={[styles.emailNoticeBody, { color: '#374151' }]}>
+              A verified order invoice and receipt has been sent to{' '}
+              <Text style={{ fontWeight: '700', color: '#166534' }}>{order.customerEmail}</Text>.
+            </Text>
+          </View>
+        </View>
+
         {/* Order Details Card */}
         <View style={[styles.card, { backgroundColor: theme.card, borderColor: theme.border }]}>
           <Text style={[styles.cardTitle, { color: theme.text }]}>Customer & Delivery</Text>
@@ -212,6 +228,34 @@ const styles = StyleSheet.create({
   orderSubtitle: {
     fontSize: 14,
     fontWeight: '600',
+  },
+  emailNoticeCard: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    padding: 14,
+    borderRadius: 14,
+    borderWidth: 1,
+    marginBottom: 16,
+    gap: 10,
+  },
+  emailIconCircle: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 2,
+  },
+  emailNoticeTitle: {
+    fontSize: 12,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  emailNoticeBody: {
+    fontSize: 12,
+    lineHeight: 18,
   },
   card: {
     padding: 16,
